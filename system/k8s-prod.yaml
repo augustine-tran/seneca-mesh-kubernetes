@@ -1,0 +1,120 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: web
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: 3000
+  selector:
+    srv: web
+  type: NodePort
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: repl
+spec:
+  ports:
+    - name: repl
+      port: 10000
+      targetPort: 10000
+  selector:
+    srv: repl
+  type: NodePort
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: consul
+spec:
+  ports:
+    - name: consul
+      port: 8500
+      targetPort: 8500
+  selector:
+    srv: consul
+  type: NodePort
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: repl
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        srv: repl
+    spec:
+      containers:
+        - name: repl
+          image: rualatngua/k8s-repl:3
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        srv: web
+    spec:
+      containers:
+        - name: web
+          image: rualatngua/k8s-web:7
+          env:
+            - name: NODE_ENV
+              value: 'production'
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ping
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        srv: ping
+    spec:
+      containers:
+        - name: ping
+          image: rualatngua/k8s-ping:7
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: math
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        srv: math
+    spec:
+      containers:
+        - name: ping
+          image: rualatngua/k8s-math:2
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: consul
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        srv: consul
+    spec:
+      containers:
+        - name: consul
+          image: consul

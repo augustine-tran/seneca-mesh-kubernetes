@@ -1,0 +1,30 @@
+fuge_global:
+  tail: true
+  monitor: true
+  auto_generate_environment: false
+  monitor_excludes:
+    - '**/node_modules/**'
+    - '**/.git/**'
+    - '**/*.log'
+
+ping:
+  type: process
+  path: ../../ping
+  run: node service-dev.js
+
+api:
+  type: process
+  path: ../../api
+  run: node server.js
+
+math:
+  type: process
+  path: ../../math
+  run: node service-dev.js
+
+repl:
+  type: process
+  path: ../../repl
+  environment:
+    PORT: 10000
+  run: node service-dev.js
